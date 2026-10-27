@@ -1,0 +1,1491 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Petualangan Cerita Rakyat Nusantara - Kelas 6 SD</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Fredoka & Lexend for child-friendly typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Lexend:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            teal: '#008080',
+                            darkTeal: '#005f5f',
+                            lightTeal: '#e6f2f2',
+                            yellow: '#FFB800',
+                            orange: '#FF6B00',
+                            navy: '#1E293B',
+                            cream: '#FFFBEB'
+                        }
+                    },
+                    fontFamily: {
+                        title: ['Fredoka', 'cursive', 'sans-serif'],
+                        body: ['Lexend', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        :root {
+            --color-primary: #008080;
+            --color-secondary: #FFB800;
+            --color-accent: #FF6B00;
+            --color-bg: #F8FAFC;
+        }
+
+        body {
+            font-family: 'Lexend', sans-serif;
+            background-color: #0f172a;
+            color: #334155;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
+        }
+
+        .font-title {
+            font-family: 'Fredoka', cursive, sans-serif;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #008080;
+            border-radius: 4px;
+        }
+
+        /* Responsive Container */
+        #app-wrapper {
+            max-width: 1280px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            margin: 0 auto;
+            background-color: #ffffff;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Touch Targets for FID and Mobile */
+        .touch-btn {
+            min-height: 48px;
+            min-width: 48px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .touch-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Animations */
+        @keyframes bounce-slow {
+            0%, 100% { transform: translateY(-5%); }
+            50% { transform: translateY(5%); }
+        }
+        .animate-bounce-slow {
+            animation: bounce-slow 3s infinite ease-in-out;
+        }
+
+        @keyframes pulse-subtle {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+        }
+        .animate-pulse-subtle {
+            animation: pulse-subtle 2s infinite ease-in-out;
+        }
+
+        .shake {
+            animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+        }
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-1px, 0, 0); }
+            20%, 80% { transform: translate3d(2px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+            40%, 60% { transform: translate3d(4px, 0, 0); }
+        }
+
+        /* Drag and Drop Card Styles */
+        .draggable-card {
+            cursor: grab;
+            touch-action: none;
+        }
+        .draggable-card:active {
+            cursor: grabbing;
+        }
+        .drop-zone.drag-over {
+            border-color: #FFB800;
+            background-color: #FEF3C7;
+            transform: scale(1.02);
+        }
+
+        /* Mascot Speech Bubble */
+        .speech-bubble {
+            position: relative;
+            background: #ffffff;
+            border-radius: 1rem;
+            border: 3px solid #008080;
+        }
+        .speech-bubble:after {
+            content: '';
+            position: absolute;
+            left: -15px;
+            top: 50%;
+            transform: translateY(-50%);
+            border-width: 10px 15px 10px 0;
+            border-style: solid;
+            border-color: transparent #008080 transparent transparent;
+            display: block;
+            width: 0;
+        }
+
+        @media (max-width: 640px) {
+            .speech-bubble:after {
+                left: 50%;
+                top: -15px;
+                transform: translateX(-50%);
+                border-width: 0 10px 15px 10px;
+                border-color: transparent transparent #008080 transparent;
+            }
+        }
+    </style>
+</head>
+<body class="bg-slate-900 min-h-screen">
+
+    <!-- App Wrapper -->
+    <div id="app-wrapper" class="flex flex-col justify-between">
+        
+        <!-- TOP HEADER & NAV -->
+        <header class="bg-brand-teal text-white shadow-md sticky top-0 z-40">
+            <div class="px-4 py-3 flex items-center justify-between">
+                <!-- Brand / Title -->
+                <div class="flex items-center space-x-3 cursor-pointer" onclick="navigateTo('cover')">
+                    <div class="w-10 h-10 bg-brand-yellow rounded-full flex items-center justify-center text-brand-darkTeal font-bold text-xl font-title shadow">
+                        <i class="fa-solid fa-book-open"></i>
+                    </div>
+                    <div>
+                        <h1 class="font-title text-lg md:text-xl leading-tight text-brand-yellow">Cerita Rakyat Nusantara</h1>
+                        <p class="text-xs text-teal-100 hidden sm:block">Bahasa Indonesia Kelas 6 SD • Fase C</p>
+                    </div>
+                </div>
+
+                <!-- Score & Progress Indicator -->
+                <div class="flex items-center space-x-4">
+                    <div class="bg-brand-darkTeal/60 px-3 py-1.5 rounded-full flex items-center space-x-2 border border-teal-400/30">
+                        <i class="fa-solid fa-star text-brand-yellow text-base"></i>
+                        <span id="global-score" class="font-title text-base text-yellow-300">0 Poin</span>
+                    </div>
+
+                    <!-- Navigation Hamburger Mobile -->
+                    <button id="menu-toggle" onclick="toggleMobileMenu()" class="touch-btn sm:hidden text-white text-2xl focus:outline-none" aria-label="Buka Menu">
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- NAVBAR MENU (Desktop & Tablet) -->
+            <nav id="desktop-nav" class="hidden sm:flex bg-brand-darkTeal px-4 py-1.5 overflow-x-auto text-sm space-x-1 border-t border-teal-600/40">
+                <button onclick="navigateTo('cover')" class="nav-btn touch-btn px-3 py-1.5 rounded-lg hover:bg-teal-700 text-white flex items-center space-x-2 transition">
+                    <i class="fa-solid fa-house"></i><span>Beranda</span>
+                </button>
+                <button onclick="navigateTo('apersepsi')" class="nav-btn touch-btn px-3 py-1.5 rounded-lg hover:bg-teal-700 text-white flex items-center space-x-2 transition">
+                    <i class="fa-solid fa-compass"></i><span>Apersepsi</span>
+                </button>
+                <button onclick="navigateTo('materi')" class="nav-btn touch-btn px-3 py-1.5 rounded-lg hover:bg-teal-700 text-white flex items-center space-x-2 transition">
+                    <i class="fa-solid fa-book-bookmark"></i><span>Materi</span>
+                </button>
+                <button onclick="navigateTo('aktivitas')" class="nav-btn touch-btn px-3 py-1.5 rounded-lg hover:bg-teal-700 text-white flex items-center space-x-2 transition">
+                    <i class="fa-solid fa-puzzle-piece"></i><span>Aktivitas</span>
+                </button>
+                <button onclick="navigateTo('game')" class="nav-btn touch-btn px-3 py-1.5 rounded-lg hover:bg-teal-700 text-white flex items-center space-x-2 transition">
+                    <i class="fa-solid fa-gamepad"></i><span>Game</span>
+                </button>
+                <button onclick="navigateTo('latihan')" class="nav-btn touch-btn px-3 py-1.5 rounded-lg hover:bg-teal-700 text-white flex items-center space-x-2 transition">
+                    <i class="fa-solid fa-pen-to-square"></i><span>Latihan</span>
+                </button>
+                <button onclick="navigateTo('kuis')" class="nav-btn touch-btn px-3 py-1.5 rounded-lg hover:bg-teal-700 text-white flex items-center space-x-2 transition">
+                    <i class="fa-solid fa-clipboard-question"></i><span>Kuis</span>
+                </button>
+                <button onclick="navigateTo('hasil')" class="nav-btn touch-btn px-3 py-1.5 rounded-lg hover:bg-teal-700 text-white flex items-center space-x-2 transition">
+                    <i class="fa-solid fa-trophy"></i><span>Hasil</span>
+                </button>
+                <button onclick="navigateTo('refleksi')" class="nav-btn touch-btn px-3 py-1.5 rounded-lg hover:bg-teal-700 text-white flex items-center space-x-2 transition">
+                    <i class="fa-solid fa-heart"></i><span>Refleksi</span>
+                </button>
+                <button onclick="navigateTo('petunjuk')" class="nav-btn touch-btn px-3 py-1.5 rounded-lg hover:bg-teal-700 text-white flex items-center space-x-2 transition">
+                    <i class="fa-solid fa-circle-info"></i><span>Petunjuk</span>
+                </button>
+            </nav>
+
+            <!-- MOBILE MENU DROPDOWN -->
+            <div id="mobile-menu" class="hidden sm:hidden bg-brand-darkTeal border-t border-teal-600/50 p-2 grid grid-cols-2 gap-1 text-sm">
+                <button onclick="navigateTo('cover')" class="touch-btn p-2 text-left text-white rounded hover:bg-teal-700 flex items-center space-x-2">
+                    <i class="fa-solid fa-house w-5"></i><span>Beranda</span>
+                </button>
+                <button onclick="navigateTo('apersepsi')" class="touch-btn p-2 text-left text-white rounded hover:bg-teal-700 flex items-center space-x-2">
+                    <i class="fa-solid fa-compass w-5"></i><span>Apersepsi</span>
+                </button>
+                <button onclick="navigateTo('materi')" class="touch-btn p-2 text-left text-white rounded hover:bg-teal-700 flex items-center space-x-2">
+                    <i class="fa-solid fa-book-bookmark w-5"></i><span>Materi</span>
+                </button>
+                <button onclick="navigateTo('aktivitas')" class="touch-btn p-2 text-left text-white rounded hover:bg-teal-700 flex items-center space-x-2">
+                    <i class="fa-solid fa-puzzle-piece w-5"></i><span>Aktivitas</span>
+                </button>
+                <button onclick="navigateTo('game')" class="touch-btn p-2 text-left text-white rounded hover:bg-teal-700 flex items-center space-x-2">
+                    <i class="fa-solid fa-gamepad w-5"></i><span>Game</span>
+                </button>
+                <button onclick="navigateTo('latihan')" class="touch-btn p-2 text-left text-white rounded hover:bg-teal-700 flex items-center space-x-2">
+                    <i class="fa-solid fa-pen-to-square w-5"></i><span>Latihan</span>
+                </button>
+                <button onclick="navigateTo('kuis')" class="touch-btn p-2 text-left text-white rounded hover:bg-teal-700 flex items-center space-x-2">
+                    <i class="fa-solid fa-clipboard-question w-5"></i><span>Kuis</span>
+                </button>
+                <button onclick="navigateTo('hasil')" class="touch-btn p-2 text-left text-white rounded hover:bg-teal-700 flex items-center space-x-2">
+                    <i class="fa-solid fa-trophy w-5"></i><span>Hasil</span>
+                </button>
+                <button onclick="navigateTo('refleksi')" class="touch-btn p-2 text-left text-white rounded hover:bg-teal-700 flex items-center space-x-2">
+                    <i class="fa-solid fa-heart w-5"></i><span>Refleksi</span>
+                </button>
+                <button onclick="navigateTo('petunjuk')" class="touch-btn p-2 text-left text-white rounded hover:bg-teal-700 flex items-center space-x-2">
+                    <i class="fa-solid fa-circle-info w-5"></i><span>Petunjuk</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- MAIN DYNAMIC CONTENT CONTAINER -->
+        <main id="main-content" class="flex-1 p-4 md:p-6 bg-slate-50 relative overflow-y-auto">
+
+            <!-- ================= 1. COVER / COVER ================= -->
+            <section id="sec-cover" class="view-section flex flex-col items-center justify-center min-h-[75vh] text-center">
+                <div class="max-w-3xl bg-gradient-to-br from-teal-500 via-teal-600 to-teal-800 text-white rounded-3xl p-6 md:p-10 shadow-2xl relative overflow-hidden border-4 border-yellow-400">
+                    <!-- Decorative Background Elements -->
+                    <div class="absolute -top-10 -right-10 w-40 h-40 bg-yellow-400/20 rounded-full blur-xl"></div>
+                    <div class="absolute -bottom-10 -left-10 w-40 h-40 bg-teal-300/20 rounded-full blur-xl"></div>
+
+                    <div class="inline-block bg-brand-yellow text-slate-900 font-title px-4 py-1 rounded-full text-xs md:text-sm font-bold mb-4 shadow-sm">
+                        ✨ Media Pembelajaran Interaktif Deep Learning
+                    </div>
+
+                    <h2 class="font-title text-2xl md:text-4xl lg:text-5xl text-yellow-300 mb-3 leading-tight drop-shadow">
+                        Petualangan Cerita Rakyat Nusantara
+                    </h2>
+                    <p class="text-teal-100 text-sm md:text-base max-w-xl mx-auto mb-6">
+                        Menguak Rahasia 7 Jenis Cerita Rakyat: Mite, Legenda, Fabel, Epos, Sage, Dongeng Jenaka, dan Dongeng Khayalan
+                    </p>
+
+                    <!-- Mascot Vector Illustration -->
+                    <div class="my-6 relative flex justify-center items-center">
+                        <div class="w-28 h-28 md:w-36 md:h-36 bg-white rounded-full flex items-center justify-center shadow-lg border-4 border-brand-yellow animate-bounce-slow">
+                            <!-- Si Peno Mascot -->
+                            <div class="text-center">
+                                <i class="fa-solid fa-dove text-4xl md:text-6xl text-brand-teal"></i>
+                                <div class="text-[10px] md:text-xs font-title font-bold text-slate-700 mt-1">Si Peno</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Teacher & Identity Metadata -->
+                    <div class="bg-black/20 rounded-xl p-3 mb-8 text-xs md:text-sm text-teal-100 border border-white/10 max-w-md mx-auto">
+                        <p><span class="font-bold text-yellow-300">Mata Pelajaran:</span> Bahasa Indonesia (Kelas 6 SD - Fase C)</p>
+                        <p><span class="font-bold text-yellow-300">Pengembang:</span> Muhammad Agus Salim, S.Pd</p>
+                    </div>
+
+                    <!-- Action Button -->
+                    <button onclick="navigateTo('apersepsi')" class="touch-btn animate-pulse-subtle bg-gradient-to-r from-yellow-400 to-amber-500 hover:from-yellow-300 hover:to-amber-400 text-slate-900 font-title font-bold text-lg md:text-xl px-8 py-4 rounded-2xl shadow-xl hover:shadow-2xl transition transform hover:-translate-y-1 border-2 border-white flex items-center space-x-3 mx-auto">
+                        <span>MULAI BERPETUALANG</span>
+                        <i class="fa-solid fa-circle-play text-2xl"></i>
+                    </button>
+                </div>
+            </section>
+
+            <!-- ================= 2. APERSEPSI ================= -->
+            <section id="sec-apersepsi" class="view-section hidden max-w-4xl mx-auto py-4">
+                <div class="bg-white rounded-2xl p-6 shadow-md border border-slate-200 mb-6">
+                    <div class="flex flex-col md:flex-row items-center gap-6">
+                        <!-- Mascot Bubble -->
+                        <div class="w-full md:w-1/3 flex flex-col items-center text-center">
+                            <div class="w-24 h-24 bg-teal-100 rounded-full flex items-center justify-center border-4 border-brand-teal mb-3">
+                                <i class="fa-solid fa-dove text-5xl text-brand-teal"></i>
+                            </div>
+                            <span class="font-title text-brand-teal font-bold text-lg">Si Peno</span>
+                            <span class="text-xs text-slate-500">Pemandu Petualangan</span>
+                        </div>
+
+                        <!-- Dialogue -->
+                        <div class="w-full md:w-2/3 speech-bubble p-5">
+                            <h3 class="font-title text-xl text-brand-teal font-bold mb-2">Halo Pengembara Cilik! 👋</h3>
+                            <p class="text-slate-700 text-sm md:text-base leading-relaxed">
+                                Pernahkah kamu mendengar cerita tentang <span class="font-semibold text-teal-700">Malin Kundang</span> yang dikutuk jadi batu, atau <span class="font-semibold text-teal-700">Kancil</span> yang cerdik menyeberangi sungai? 
+                            </p>
+                            <p class="text-slate-700 text-sm md:text-base leading-relaxed mt-2">
+                                Tahukah kamu bahwa cerita rakyat Nusantara itu sangat beragam jenisnya? Mari kita pelajari bersama rahasia di baliknya!
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Interactive Warm-up Trigger -->
+                <div class="bg-amber-50 border-2 border-amber-300 rounded-2xl p-6 shadow-sm">
+                    <h4 class="font-title text-lg text-amber-900 font-bold mb-3 flex items-center space-x-2">
+                        <i class="fa-solid fa-lightbulb text-amber-500 text-xl"></i>
+                        <span>Pertanyaan Pemantik:</span>
+                    </h4>
+                    <p class="text-slate-800 text-sm md:text-base mb-4">
+                        Mengapa menurutmu cerita rakyat zaman dahulu selalu diceritakan secara turun-temurun dari kakek-nenek ke anak-cucu?
+                    </p>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <button onclick="handleApersepsiChoice(true, 'Benar sekali! Cerita rakyat mengandung nilai moral dan warisan budaya yang ingin diwariskan.')" class="touch-btn bg-white hover:bg-teal-50 border-2 border-teal-200 text-slate-700 p-3 rounded-xl text-left text-sm font-medium transition flex items-center space-x-3">
+                            <span class="w-8 h-8 rounded-full bg-teal-100 text-teal-700 flex items-center justify-center font-bold">A</span>
+                            <span>Untuk memberi pesan moral dan pengajaran hidup</span>
+                        </button>
+                        <button onclick="handleApersepsiChoice(false, 'Kurang tepat. Meskipun menghibur, tujuan utamanya adalah melestarikan nasihat & budaya.')" class="touch-btn bg-white hover:bg-teal-50 border-2 border-teal-200 text-slate-700 p-3 rounded-xl text-left text-sm font-medium transition flex items-center space-x-3">
+                            <span class="w-8 h-8 rounded-full bg-teal-100 text-teal-700 flex items-center justify-center font-bold">B</span>
+                            <span>Hanya sekadar dongeng sebelum tidur tanpa arti</span>
+                        </button>
+                    </div>
+
+                    <div id="apersepsi-feedback" class="mt-4 p-4 rounded-xl hidden text-sm font-medium"></div>
+                </div>
+
+                <div class="mt-8 flex justify-end">
+                    <button onclick="navigateTo('materi')" class="touch-btn bg-brand-teal hover:bg-brand-darkTeal text-white font-title px-6 py-3 rounded-xl shadow flex items-center space-x-2">
+                        <span>Lanjut ke Materi</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </section>
+
+            <!-- ================= 3. MATERI INTI (CHUNKING) ================= -->
+            <section id="sec-materi" class="view-section hidden max-w-5xl mx-auto py-2">
+                <div class="flex items-center justify-between mb-4">
+                    <div>
+                        <h2 class="font-title text-2xl text-brand-teal font-bold">7 Rumah Cerita Rakyat</h2>
+                        <p class="text-xs md:text-sm text-slate-600">Klik setiap jenis cerita untuk menguak ciri khasnya!</p>
+                    </div>
+                    <span class="bg-teal-100 text-teal-800 text-xs font-bold px-3 py-1 rounded-full">Eksplorasi Materi</span>
+                </div>
+
+                <!-- Cards Grid for 7 Folktale Types -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+                    
+                    <!-- 1. Mite -->
+                    <div onclick="showMateriModal('mite')" class="touch-btn bg-white hover:bg-teal-50 border-2 border-teal-100 hover:border-brand-teal rounded-2xl p-4 shadow-sm hover:shadow-md transition text-left flex flex-col justify-between cursor-pointer">
+                        <div class="flex items-center space-x-3 mb-2">
+                            <div class="w-12 h-12 bg-purple-100 text-purple-600 rounded-xl flex items-center justify-center text-2xl font-bold">
+                                🔮
+                            </div>
+                            <div>
+                                <h3 class="font-title font-bold text-lg text-slate-800">1. Mite (Mitos)</h3>
+                                <span class="text-xs text-purple-600 font-semibold">Gaib & Kepercayaan</span>
+                            </div>
+                        </div>
+                        <p class="text-xs text-slate-600 line-clamp-2">Berhubungan dengan dewa-dewi, roh halus, atau hal gaib yang dianggap suci.</p>
+                        <div class="mt-3 text-right text-xs text-brand-teal font-bold">Pelajari <i class="fa-solid fa-chevron-right"></i></div>
+                    </div>
+
+                    <!-- 2. Legenda -->
+                    <div onclick="showMateriModal('legenda')" class="touch-btn bg-white hover:bg-teal-50 border-2 border-teal-100 hover:border-brand-teal rounded-2xl p-4 shadow-sm hover:shadow-md transition text-left flex flex-col justify-between cursor-pointer">
+                        <div class="flex items-center space-x-3 mb-2">
+                            <div class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-xl flex items-center justify-center text-2xl font-bold">
+                                🏞️
+                            </div>
+                            <div>
+                                <h3 class="font-title font-bold text-lg text-slate-800">2. Legenda</h3>
+                                <span class="text-xs text-emerald-600 font-semibold">Asal-usul Tempat</span>
+                            </div>
+                        </div>
+                        <p class="text-xs text-slate-600 line-clamp-2">Mengisahkan asal mula terjadinya suatu tempat, gunung, atau peristiwa alam.</p>
+                        <div class="mt-3 text-right text-xs text-brand-teal font-bold">Pelajari <i class="fa-solid fa-chevron-right"></i></div>
+                    </div>
+
+                    <!-- 3. Fabel -->
+                    <div onclick="showMateriModal('fabel')" class="touch-btn bg-white hover:bg-teal-50 border-2 border-teal-100 hover:border-brand-teal rounded-2xl p-4 shadow-sm hover:shadow-md transition text-left flex flex-col justify-between cursor-pointer">
+                        <div class="flex items-center space-x-3 mb-2">
+                            <div class="w-12 h-12 bg-amber-100 text-amber-600 rounded-xl flex items-center justify-center text-2xl font-bold">
+                                🦊
+                            </div>
+                            <div>
+                                <h3 class="font-title font-bold text-lg text-slate-800">3. Fabel</h3>
+                                <span class="text-xs text-amber-600 font-semibold">Tokoh Hewan</span>
+                            </div>
+                        </div>
+                        <p class="text-xs text-slate-600 line-clamp-2">Cerita bertokoh binatang yang bertingkah laku dan berbicara seperti manusia.</p>
+                        <div class="mt-3 text-right text-xs text-brand-teal font-bold">Pelajari <i class="fa-solid fa-chevron-right"></i></div>
+                    </div>
+
+                    <!-- 4. Epos -->
+                    <div onclick="showMateriModal('epos')" class="touch-btn bg-white hover:bg-teal-50 border-2 border-teal-100 hover:border-brand-teal rounded-2xl p-4 shadow-sm hover:shadow-md transition text-left flex flex-col justify-between cursor-pointer">
+                        <div class="flex items-center space-x-3 mb-2">
+                            <div class="w-12 h-12 bg-red-100 text-red-600 rounded-xl flex items-center justify-center text-2xl font-bold">
+                                🏹
+                            </div>
+                            <div>
+                                <h3 class="font-title font-bold text-lg text-slate-800">4. Epos</h3>
+                                <span class="text-xs text-red-600 font-semibold">Wiracarita/Kepahlawanan</span>
+                            </div>
+                        </div>
+                        <p class="text-xs text-slate-600 line-clamp-2">Kisah perjuangan pahlawan gagah berani dalam peperangan besar.</p>
+                        <div class="mt-3 text-right text-xs text-brand-teal font-bold">Pelajari <i class="fa-solid fa-chevron-right"></i></div>
+                    </div>
+
+                    <!-- 5. Sage -->
+                    <div onclick="showMateriModal('sage')" class="touch-btn bg-white hover:bg-teal-50 border-2 border-teal-100 hover:border-brand-teal rounded-2xl p-4 shadow-sm hover:shadow-md transition text-left flex flex-col justify-between cursor-pointer">
+                        <div class="flex items-center space-x-3 mb-2">
+                            <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center text-2xl font-bold">
+                                📜
+                            </div>
+                            <div>
+                                <h3 class="font-title font-bold text-lg text-slate-800">5. Sage</h3>
+                                <span class="text-xs text-blue-600 font-semibold">Sejarah + Khayalan</span>
+                            </div>
+                        </div>
+                        <p class="text-xs text-slate-600 line-clamp-2">Cerita mengandung unsur sejarah lama yang dibumbui kesaktian atau imajinasi.</p>
+                        <div class="mt-3 text-right text-xs text-brand-teal font-bold">Pelajari <i class="fa-solid fa-chevron-right"></i></div>
+                    </div>
+
+                    <!-- 6. Dongeng Jenaka -->
+                    <div onclick="showMateriModal('jenaka')" class="touch-btn bg-white hover:bg-teal-50 border-2 border-teal-100 hover:border-brand-teal rounded-2xl p-4 shadow-sm hover:shadow-md transition text-left flex flex-col justify-between cursor-pointer">
+                        <div class="flex items-center space-x-3 mb-2">
+                            <div class="w-12 h-12 bg-pink-100 text-pink-600 rounded-xl flex items-center justify-center text-2xl font-bold">
+                                🤡
+                            </div>
+                            <div>
+                                <h3 class="font-title font-bold text-lg text-slate-800">6. Dongeng Jenaka</h3>
+                                <span class="text-xs text-pink-600 font-semibold">Humor & Lucu</span>
+                            </div>
+                        </div>
+                        <p class="text-xs text-slate-600 line-clamp-2">Cerita lucu mengocok perut tentang kebodohan atau kecerdikan tokohnya.</p>
+                        <div class="mt-3 text-right text-xs text-brand-teal font-bold">Pelajari <i class="fa-solid fa-chevron-right"></i></div>
+                    </div>
+
+                    <!-- 7. Dongeng Khayalan -->
+                    <div onclick="showMateriModal('khayalan')" class="touch-btn bg-white hover:bg-teal-50 border-2 border-teal-100 hover:border-brand-teal rounded-2xl p-4 shadow-sm hover:shadow-md transition text-left sm:col-span-2 lg:col-span-1 flex flex-col justify-between cursor-pointer">
+                        <div class="flex items-center space-x-3 mb-2">
+                            <div class="w-12 h-12 bg-cyan-100 text-cyan-600 rounded-xl flex items-center justify-center text-2xl font-bold">
+                                ✨
+                            </div>
+                            <div>
+                                <h3 class="font-title font-bold text-lg text-slate-800">7. Dongeng Khayalan</h3>
+                                <span class="text-xs text-cyan-600 font-semibold">Imajinasi Murni</span>
+                            </div>
+                        </div>
+                        <p class="text-xs text-slate-600 line-clamp-2">Cerita murni hasil rekaan tanpa dikaitkan dengan sejarah atau tempat nyata.</p>
+                        <div class="mt-3 text-right text-xs text-brand-teal font-bold">Pelajari <i class="fa-solid fa-chevron-right"></i></div>
+                    </div>
+
+                </div>
+
+                <!-- Next Stage CTA -->
+                <div class="bg-gradient-to-r from-teal-500 to-teal-700 text-white rounded-2xl p-5 shadow flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <div>
+                        <h4 class="font-title text-lg font-bold">Sudah paham semua jenis cerita?</h4>
+                        <p class="text-xs text-teal-100">Uji pemahamanmu dalam Aktivitas Klasifikasi Interaktif!</p>
+                    </div>
+                    <button onclick="navigateTo('aktivitas')" class="touch-btn bg-brand-yellow hover:bg-yellow-400 text-slate-900 font-title font-bold px-6 py-3 rounded-xl shadow transition whitespace-nowrap">
+                        Ayo Beraktivitas <i class="fa-solid fa-arrow-right ml-1"></i>
+                    </button>
+                </div>
+            </section>
+
+            <!-- MODAL DETAIL MATERI -->
+            <div id="materi-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+                <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl relative animate-pulse-subtle border-4 border-teal-500">
+                    <button onclick="closeMateriModal()" class="absolute top-4 right-4 touch-btn w-10 h-10 bg-slate-100 rounded-full text-slate-600 font-bold hover:bg-slate-200">
+                        <i class="fa-solid fa-xmark text-xl"></i>
+                    </button>
+                    
+                    <div id="materi-modal-body">
+                        <!-- Filled dynamically -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- ================= 4. AKTIVITAS INTERAKTIF (DRAG & DROP) ================= -->
+            <section id="sec-aktivitas" class="view-section hidden max-w-4xl mx-auto py-2">
+                <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200 mb-4">
+                    <div class="flex items-center justify-between mb-2">
+                        <h2 class="font-title text-xl text-brand-teal font-bold flex items-center space-x-2">
+                            <i class="fa-solid fa-puzzle-piece text-yellow-500"></i>
+                            <span>Aktivitas 1: Labirin Pasangkan Ciri Cerita</span>
+                        </h2>
+                        <span id="activity-score-badge" class="bg-amber-100 text-amber-800 text-xs font-bold px-3 py-1 rounded-full">0/3 Terpasang</span>
+                    </div>
+                    <p class="text-xs md:text-sm text-slate-600">Geser (Drag) atau Klik kartu ciri cerita di bawah, lalu tempatkan ke dalam Kotak Jenis Cerita yang tepat!</p>
+                </div>
+
+                <!-- Interactive Drag & Drop Container -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    
+                    <!-- Draggable Items -->
+                    <div class="bg-teal-50/70 border-2 border-dashed border-teal-300 rounded-2xl p-4">
+                        <h3 class="font-title text-sm font-bold text-teal-800 mb-3 uppercase tracking-wider">Pilihan Ciri-Ciri Cerita:</h3>
+                        <div id="draggable-container" class="space-y-3">
+                            <div draggable="true" ondragstart="handleDragStart(event)" onclick="handleCardClick(this)" data-match="fabel" class="draggable-card touch-btn w-full bg-white border-2 border-amber-300 p-3 rounded-xl shadow-sm hover:shadow text-left text-xs md:text-sm text-slate-700 flex items-center justify-between">
+                                <span>"Tokoh utamanya hewan yang dapat berbicara & bertindak seperti manusia."</span>
+                                <i class="fa-solid fa-grip-vertical text-slate-400 ml-2"></i>
+                            </div>
+                            <div draggable="true" ondragstart="handleDragStart(event)" onclick="handleCardClick(this)" data-match="legenda" class="draggable-card touch-btn w-full bg-white border-2 border-emerald-300 p-3 rounded-xl shadow-sm hover:shadow text-left text-xs md:text-sm text-slate-700 flex items-center justify-between">
+                                <span>"Mengisahkan asal-usul terbentuknya Danau Toba atau Gunung Tangkuban Perahu."</span>
+                                <i class="fa-solid fa-grip-vertical text-slate-400 ml-2"></i>
+                            </div>
+                            <div draggable="true" ondragstart="handleDragStart(event)" onclick="handleCardClick(this)" data-match="jenaka" class="draggable-card touch-btn w-full bg-white border-2 border-pink-300 p-3 rounded-xl shadow-sm hover:shadow text-left text-xs md:text-sm text-slate-700 flex items-center justify-between">
+                                <span>"Cerita lucu yang menceritakan kebodohan atau kecerdikan Si Kabayan."</span>
+                                <i class="fa-solid fa-grip-vertical text-slate-400 ml-2"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Target Drop Zones -->
+                    <div class="space-y-4">
+                        <!-- Zone 1: Legenda -->
+                        <div ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event, 'legenda')" onclick="handleZoneClick('legenda')" data-type="legenda" class="drop-zone bg-white border-2 border-slate-300 rounded-2xl p-4 transition min-h-[100px] flex flex-col justify-between">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="font-title font-bold text-emerald-700 text-base">Kotak Jenis: LEGENDA</span>
+                                <i class="fa-solid fa-mountain text-emerald-500"></i>
+                            </div>
+                            <div class="drop-target-content text-xs text-slate-400 italic">Tempatkan ciri legenda di sini...</div>
+                        </div>
+
+                        <!-- Zone 2: Fabel -->
+                        <div ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event, 'fabel')" onclick="handleZoneClick('fabel')" data-type="fabel" class="drop-zone bg-white border-2 border-slate-300 rounded-2xl p-4 transition min-h-[100px] flex flex-col justify-between">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="font-title font-bold text-amber-700 text-base">Kotak Jenis: FABEL</span>
+                                <i class="fa-solid fa-paw text-amber-500"></i>
+                            </div>
+                            <div class="drop-target-content text-xs text-slate-400 italic">Tempatkan ciri fabel di sini...</div>
+                        </div>
+
+                        <!-- Zone 3: Jenaka -->
+                        <div ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event, 'jenaka')" onclick="handleZoneClick('jenaka')" data-type="jenaka" class="drop-zone bg-white border-2 border-slate-300 rounded-2xl p-4 transition min-h-[100px] flex flex-col justify-between">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="font-title font-bold text-pink-700 text-base">Kotak Jenis: DONGENG JENAKA</span>
+                                <i class="fa-solid fa-face-laugh-beam text-pink-500"></i>
+                            </div>
+                            <div class="drop-target-content text-xs text-slate-400 italic">Tempatkan ciri dongeng jenaka di sini...</div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div id="aktivitas-feedback" class="mt-4 p-4 rounded-xl hidden text-sm font-semibold text-center"></div>
+
+                <div class="mt-6 flex justify-between">
+                    <button onclick="resetAktivitas()" class="touch-btn bg-slate-200 hover:bg-slate-300 text-slate-700 font-title px-4 py-2.5 rounded-xl text-sm">
+                        <i class="fa-solid fa-rotate-right mr-1"></i> Reset Aktivitas
+                    </button>
+                    <button onclick="navigateTo('game')" class="touch-btn bg-brand-teal hover:bg-brand-darkTeal text-white font-title px-6 py-2.5 rounded-xl shadow text-sm">
+                        Lanjut ke Game <i class="fa-solid fa-arrow-right ml-1"></i>
+                    </button>
+                </div>
+            </section>
+
+            <!-- ================= 5. GAME EDUKASI (DETEKTIF CERITA) ================= -->
+            <section id="sec-game" class="view-section hidden max-w-4xl mx-auto py-2">
+                <div class="bg-gradient-to-r from-purple-600 to-indigo-700 text-white rounded-2xl p-6 shadow-lg mb-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <span class="bg-yellow-400 text-slate-900 font-title text-xs font-bold px-3 py-1 rounded-full uppercase">Mini Game</span>
+                            <h2 class="font-title text-2xl font-bold text-yellow-300 mt-1">🎮 Detektif Cerita Rakyat</h2>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-xs text-purple-200">Bonus Poin Game</div>
+                            <div id="game-score" class="font-title text-2xl text-yellow-300">0</div>
+                        </div>
+                    </div>
+                    <p class="text-xs md:text-sm text-purple-100 mt-2">
+                        Peno menemukan potongan kisah rahasia! Bacalah cuplikan kisah di bawah dan tebak stempel jenis cerita yang tepat!
+                    </p>
+                </div>
+
+                <!-- Game Board Card -->
+                <div class="bg-white rounded-2xl p-6 shadow-md border-2 border-purple-200 mb-6">
+                    <div class="flex items-start space-x-4 mb-4">
+                        <div class="w-12 h-12 bg-purple-100 text-purple-700 rounded-full flex items-center justify-center font-bold text-xl flex-shrink-0">
+                            🔍
+                        </div>
+                        <div>
+                            <span id="game-case-number" class="text-xs font-bold text-purple-600 uppercase">Kasus #1</span>
+                            <h3 id="game-story-title" class="font-title text-lg font-bold text-slate-800">Kisah Perjuangan Gatotkaca</h3>
+                        </div>
+                    </div>
+
+                    <div id="game-story-box" class="bg-slate-50 border-l-4 border-purple-500 p-4 rounded-r-xl text-slate-700 text-sm md:text-base leading-relaxed italic mb-6">
+                        "Gatotkaca yang berotot kawat bertulang besi terbang mengangkasa membela kerajaan dari serangan para raksasa jahat demi kedamaian Nusantara..."
+                    </div>
+
+                    <p class="font-title text-sm text-slate-800 font-bold mb-3">Pilih Stempel Detektif yang Tepat:</p>
+
+                    <!-- Stamp Options -->
+                    <div id="game-options" class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                        <!-- Filled dynamically -->
+                    </div>
+
+                    <div id="game-feedback" class="mt-4 p-4 rounded-xl hidden text-sm font-semibold"></div>
+                </div>
+
+                <div class="flex justify-between items-center">
+                    <button onclick="initGame()" class="touch-btn bg-slate-200 hover:bg-slate-300 text-slate-700 font-title px-4 py-2.5 rounded-xl text-sm">
+                        <i class="fa-solid fa-arrows-rotate mr-1"></i> Acak Kasus
+                    </button>
+                    <button onclick="navigateTo('latihan')" class="touch-btn bg-brand-teal hover:bg-brand-darkTeal text-white font-title px-6 py-2.5 rounded-xl shadow text-sm">
+                        Ke Latihan <i class="fa-solid fa-arrow-right ml-1"></i>
+                    </button>
+                </div>
+            </section>
+
+            <!-- ================= 6. LATIHAN INTERAKTIF WITH FEEDBACK ================= -->
+            <section id="sec-latihan" class="view-section hidden max-w-3xl mx-auto py-2">
+                <div class="bg-white rounded-2xl p-6 shadow-md border border-slate-200 mb-6">
+                    <div class="flex items-center justify-between mb-4 border-b pb-3">
+                        <h2 class="font-title text-xl text-brand-teal font-bold flex items-center space-x-2">
+                            <i class="fa-solid fa-pen-to-square text-teal-600"></i>
+                            <span>Latihan Mandiri & Umpan Balik</span>
+                        </h2>
+                        <span id="latihan-step-indicator" class="text-xs bg-teal-100 text-teal-800 font-bold px-3 py-1 rounded-full">Soal 1 dari 3</span>
+                    </div>
+
+                    <div id="latihan-container">
+                        <!-- Dynamic Latihan Card -->
+                    </div>
+                </div>
+
+                <div class="flex justify-between">
+                    <button id="btn-prev-latihan" onclick="changeLatihan(-1)" class="touch-btn bg-slate-200 hover:bg-slate-300 text-slate-700 font-title px-4 py-2 rounded-xl text-sm hidden">
+                        <i class="fa-solid fa-arrow-left mr-1"></i> Sebelumnya
+                    </button>
+                    <button id="btn-next-latihan" onclick="changeLatihan(1)" class="touch-btn bg-brand-teal hover:bg-brand-darkTeal text-white font-title px-6 py-2.5 rounded-xl shadow text-sm ml-auto">
+                        Soal Berikutnya <i class="fa-solid fa-arrow-right ml-1"></i>
+                    </button>
+                </div>
+            </section>
+
+            <!-- ================= 7. KUIS AKHIR (EVALUASI 10 SOAL) ================= -->
+            <section id="sec-kuis" class="view-section hidden max-w-3xl mx-auto py-2">
+                <!-- Quiz Header & Progress Bar -->
+                <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200 mb-4">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="font-title font-bold text-brand-teal text-lg">📝 Kuis Evaluasi Akhir</span>
+                        <span id="quiz-timer" class="text-xs font-bold bg-amber-100 text-amber-800 px-3 py-1 rounded-full">Soal <span id="quiz-current-num">1</span>/10</span>
+                    </div>
+                    <!-- Progress Bar -->
+                    <div class="w-full bg-slate-100 h-3 rounded-full overflow-hidden">
+                        <div id="quiz-progress-bar" class="bg-brand-teal h-full w-[10%] transition-all duration-300"></div>
+                    </div>
+                </div>
+
+                <!-- Quiz Card Container -->
+                <div id="quiz-card-box" class="bg-white rounded-2xl p-6 shadow-md border border-slate-200">
+                    <!-- Dynamic Question Content -->
+                </div>
+
+                <!-- Quiz Controls -->
+                <div class="mt-6 flex justify-between items-center">
+                    <button id="quiz-prev-btn" onclick="navQuiz(-1)" class="touch-btn bg-slate-200 hover:bg-slate-300 text-slate-700 font-title px-4 py-2.5 rounded-xl text-sm hidden">
+                        <i class="fa-solid fa-arrow-left mr-1"></i> Kembali
+                    </button>
+                    <button id="quiz-next-btn" onclick="navQuiz(1)" class="touch-btn bg-brand-yellow hover:bg-yellow-400 text-slate-900 font-title font-bold px-6 py-2.5 rounded-xl shadow text-sm ml-auto">
+                        Selanjutnya <i class="fa-solid fa-arrow-right ml-1"></i>
+                    </button>
+                </div>
+            </section>
+
+            <!-- ================= 8. HALAMAN HASIL BELAJAR ================= -->
+            <section id="sec-hasil" class="view-section hidden max-w-2xl mx-auto py-4 text-center">
+                <div class="bg-white rounded-3xl p-8 shadow-xl border-4 border-teal-500 relative overflow-hidden">
+                    
+                    <div class="w-24 h-24 bg-yellow-100 text-yellow-500 rounded-full flex items-center justify-center text-5xl mx-auto mb-4 border-4 border-yellow-400 shadow">
+                        <i class="fa-solid fa-trophy"></i>
+                    </div>
+
+                    <h2 class="font-title text-3xl font-bold text-slate-800 mb-1">Hasil Pencapaian Belajar</h2>
+                    <p class="text-xs text-slate-500 mb-6">Petualangan Cerita Rakyat Nusantara</p>
+
+                    <!-- Score Showcase -->
+                    <div class="bg-slate-50 rounded-2xl p-6 border border-slate-200 mb-6 max-w-sm mx-auto">
+                        <div class="text-xs text-slate-500 font-bold uppercase tracking-wider mb-1">Nilai Akhir Kuis</div>
+                        <div id="final-quiz-score" class="font-title text-6xl text-brand-teal font-bold">0</div>
+                        <div id="final-badge" class="mt-3 inline-block bg-brand-yellow text-slate-900 font-title text-xs font-bold px-4 py-1.5 rounded-full shadow-sm">
+                            Penyelidik Cilik
+                        </div>
+                    </div>
+
+                    <!-- Summary Stats -->
+                    <div class="grid grid-cols-2 gap-4 max-w-sm mx-auto mb-6 text-sm">
+                        <div class="bg-emerald-50 p-3 rounded-xl border border-emerald-200">
+                            <span class="text-emerald-700 font-bold block text-xs">Jawaban Benar</span>
+                            <span id="stat-correct" class="font-title text-xl text-emerald-800 font-bold">0</span>
+                        </div>
+                        <div class="bg-rose-50 p-3 rounded-xl border border-rose-200">
+                            <span class="text-rose-700 font-bold block text-xs">Jawaban Salah</span>
+                            <span id="stat-wrong" class="font-title text-xl text-rose-800 font-bold">0</span>
+                        </div>
+                    </div>
+
+                    <!-- Remedial / Enrichment Advice -->
+                    <div id="remedial-box" class="bg-blue-50 border border-blue-200 p-4 rounded-xl text-left text-xs text-blue-900 mb-6">
+                        <!-- Filled dynamically -->
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row gap-3 justify-center">
+                        <button onclick="navigateTo('kuis'); resetQuiz();" class="touch-btn bg-slate-200 hover:bg-slate-300 text-slate-700 font-title px-5 py-3 rounded-xl text-sm font-bold">
+                            <i class="fa-solid fa-rotate-right mr-1"></i> Ulangi Kuis
+                        </button>
+                        <button onclick="navigateTo('refleksi')" class="touch-btn bg-brand-teal hover:bg-brand-darkTeal text-white font-title px-6 py-3 rounded-xl shadow text-sm font-bold">
+                            Isi Refleksi Diri <i class="fa-solid fa-heart ml-1"></i>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ================= 9. REFLEKSI PESERTA DIDIK ================= -->
+            <section id="sec-refleksi" class="view-section hidden max-w-2xl mx-auto py-2">
+                <div class="bg-white rounded-2xl p-6 shadow-md border border-slate-200">
+                    <div class="text-center mb-6">
+                        <h2 class="font-title text-2xl font-bold text-brand-teal">💭 Jurnal Refleksi Cilik</h2>
+                        <p class="text-xs text-slate-600 mt-1">Bagaimana pengalaman belajarmu hari ini? Suarakan pendapatmu!</p>
+                    </div>
+
+                    <form id="reflection-form" onsubmit="handleReflectionSubmit(event)" class="space-y-5">
+                        
+                        <!-- 1. Emoji Feeling -->
+                        <div>
+                            <label class="block font-title text-sm text-slate-800 font-bold mb-2">1. Perasaanku setelah belajar materi ini:</label>
+                            <div class="grid grid-cols-4 gap-3 text-center">
+                                <label class="cursor-pointer">
+                                    <input type="radio" name="feeling" value="Sangat Senang" class="peer hidden" required>
+                                    <div class="p-3 bg-slate-50 peer-checked:bg-teal-100 peer-checked:border-brand-teal border-2 border-slate-200 rounded-2xl text-2xl transition">
+                                        😍
+                                        <span class="block text-[10px] font-bold text-slate-600 mt-1">Sangat Senang</span>
+                                    </div>
+                                </label>
+                                <label class="cursor-pointer">
+                                    <input type="radio" name="feeling" value="Senang" class="peer hidden">
+                                    <div class="p-3 bg-slate-50 peer-checked:bg-teal-100 peer-checked:border-brand-teal border-2 border-slate-200 rounded-2xl text-2xl transition">
+                                        😊
+                                        <span class="block text-[10px] font-bold text-slate-600 mt-1">Senang</span>
+                                    </div>
+                                </label>
+                                <label class="cursor-pointer">
+                                    <input type="radio" name="feeling" value="Biasa Saja" class="peer hidden">
+                                    <div class="p-3 bg-slate-50 peer-checked:bg-teal-100 peer-checked:border-brand-teal border-2 border-slate-200 rounded-2xl text-2xl transition">
+                                        😐
+                                        <span class="block text-[10px] font-bold text-slate-600 mt-1">Biasa Saja</span>
+                                    </div>
+                                </label>
+                                <label class="cursor-pointer">
+                                    <input type="radio" name="feeling" value="Bingung" class="peer hidden">
+                                    <div class="p-3 bg-slate-50 peer-checked:bg-teal-100 peer-checked:border-brand-teal border-2 border-slate-200 rounded-2xl text-2xl transition">
+                                        🤔
+                                        <span class="block text-[10px] font-bold text-slate-600 mt-1">Bingung</span>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- 2. Favorite Story Type -->
+                        <div>
+                            <label class="block font-title text-sm text-slate-800 font-bold mb-2">2. Jenis cerita rakyat yang paling saya sukai:</label>
+                            <select name="favType" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3 text-sm focus:outline-none focus:border-brand-teal">
+                                <option value="Fabel">Fabel (Cerita Binatang)</option>
+                                <option value="Legenda">Legenda (Asal-usul Tempat)</option>
+                                <option value="Mite">Mite (Gaib & Mitos)</option>
+                                <option value="Epos">Epos (Kepahlawanan)</option>
+                                <option value="Sage">Sage (Sejarah)</option>
+                                <option value="Dongeng Jenaka">Dongeng Jenaka (Lucu)</option>
+                                <option value="Dongeng Khayalan">Dongeng Khayalan</option>
+                            </select>
+                        </div>
+
+                        <!-- 3. Open Note -->
+                        <div>
+                            <label class="block font-title text-sm text-slate-800 font-bold mb-2">3. Satu pesan moral atau hal baru yang saya dapatkan:</label>
+                            <textarea name="notes" rows="3" placeholder="Tuliskan di sini..." class="w-full bg-slate-50 border border-slate-300 rounded-xl p-3 text-sm focus:outline-none focus:border-brand-teal"></textarea>
+                        </div>
+
+                        <button type="submit" class="touch-btn w-full bg-brand-yellow hover:bg-yellow-400 text-slate-900 font-title font-bold p-3 rounded-xl shadow transition">
+                            Simpan Refleksi <i class="fa-solid fa-paper-plane ml-1"></i>
+                        </button>
+                    </form>
+
+                    <div id="reflection-thanks" class="hidden mt-4 p-4 bg-emerald-100 text-emerald-800 rounded-xl text-center text-sm font-semibold">
+                        🎉 Terima kasih telah merefleksikan belajarmu hari ini!
+                    </div>
+                </div>
+            </section>
+
+            <!-- ================= 10. PETUNJUK PENGGUNAAN ================= -->
+            <section id="sec-petunjuk" class="view-section hidden max-w-3xl mx-auto py-2">
+                <div class="bg-white rounded-2xl p-6 shadow-md border border-slate-200">
+                    <h2 class="font-title text-2xl font-bold text-brand-teal mb-4 flex items-center space-x-2">
+                        <i class="fa-solid fa-circle-info text-yellow-500"></i>
+                        <span>Petunjuk Penggunaan Media</span>
+                    </h2>
+
+                    <div class="space-y-4 text-xs md:text-sm text-slate-700 leading-relaxed">
+                        <div class="flex items-start space-x-3">
+                            <span class="w-7 h-7 bg-teal-100 text-brand-teal font-bold rounded-full flex items-center justify-center flex-shrink-0">1</span>
+                            <p><span class="font-bold text-slate-900">Navigasi Utama:</span> Gunakan bilah menu di bagian atas layar untuk berpindah antar modul pembelajaran dengan mudah.</p>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <span class="w-7 h-7 bg-teal-100 text-brand-teal font-bold rounded-full flex items-center justify-center flex-shrink-0">2</span>
+                            <p><span class="font-bold text-slate-900">Mode Layar Sentuh (FID/Tablet):</span> Semua tombol dirancang dengan ukuran ramah sentuhan (minimal 48x48px). Tidak perlu bergantung pada hover mouse.</p>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <span class="w-7 h-7 bg-teal-100 text-brand-teal font-bold rounded-full flex items-center justify-center flex-shrink-0">3</span>
+                            <p><span class="font-bold text-slate-900">Interaksi Seret & Lepas (Drag & Drop):</span> Di modul Aktivitas, kamu bisa menggeser kartu atau cukup mengeklik kartu lalu mengeklik kotak tujuan.</p>
+                        </div>
+                        <div class="flex items-start space-x-3">
+                            <span class="w-7 h-7 bg-teal-100 text-brand-teal font-bold rounded-full flex items-center justify-center flex-shrink-0">4</span>
+                            <p><span class="font-bold text-slate-900">Penyimpanan Progres:</span> Poin dan progres belajarmu akan tersimpan secara otomatis di peramban web ini.</p>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 pt-4 border-t text-xs text-slate-500">
+                        <p class="font-bold text-slate-700">Spesifikasi Pembelajaran:</p>
+                        <p>Kurikulum Merdeka • Kelas VI SD / Fase C • Bahasa Indonesia</p>
+                        <p>Pengembang: Muhammad Agus Salim, S.Pd</p>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- FOOTER -->
+        <footer class="bg-slate-800 text-slate-300 text-xs p-3 text-center border-t border-slate-700 flex flex-col sm:flex-row justify-between items-center gap-2 px-6">
+            <div>
+                © 2026 Media Pembelajaran Interaktif • <span class="text-brand-yellow font-semibold">Muhammad Agus Salim, S.Pd</span>
+            </div>
+            <div class="flex items-center space-x-3 text-slate-400">
+                <span>SDN Sekumpul 2</span>
+                <span>•</span>
+                <span>Deep Learning (Fase C)</span>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        /* ================= STATE MANAGEMENT ================= */
+        let state = {
+            score: 0,
+            activeTab: 'cover',
+            gameScore: 0,
+            activityDone: 0,
+            quizCurrentIndex: 0,
+            quizAnswers: new Array(10).fill(null),
+            latihanCurrentIndex: 0,
+            selectedDragCard: null
+        };
+
+        // Load saved state from LocalStorage
+        function loadSavedState() {
+            const savedScore = localStorage.getItem('cerita_rakyat_score');
+            if (savedScore) {
+                state.score = parseInt(savedScore, 10);
+                updateScoreUI();
+            }
+        }
+
+        function addPoints(pts) {
+            state.score += pts;
+            localStorage.setItem('cerita_rakyat_score', state.score);
+            updateScoreUI();
+        }
+
+        function updateScoreUI() {
+            document.getElementById('global-score').textContent = `${state.score} Poin`;
+        }
+
+        /* ================= NAVIGATION SYSTEM ================= */
+        function navigateTo(sectionId) {
+            state.activeTab = sectionId;
+            
+            // Hide all sections
+            const sections = document.querySelectorAll('.view-section');
+            sections.forEach(sec => sec.classList.add('hidden'));
+
+            // Show selected section
+            const targetSec = document.getElementById(`sec-${sectionId}`);
+            if (targetSec) {
+                targetSec.classList.remove('hidden');
+            }
+
+            // Close mobile menu if open
+            document.getElementById('mobile-menu').classList.add('hidden');
+
+            // Scroll to top of content
+            document.getElementById('main-content').scrollTop = 0;
+
+            // Trigger specific module render if needed
+            if (sectionId === 'game') initGame();
+            if (sectionId === 'latihan') renderLatihan();
+            if (sectionId === 'kuis') renderQuizQuestion();
+        }
+
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        }
+
+        /* ================= 2. APERSEPSI LOGIC ================= */
+        function handleApersepsiChoice(isCorrect, msg) {
+            const fb = document.getElementById('apersepsi-feedback');
+            fb.classList.remove('hidden', 'bg-emerald-100', 'text-emerald-800', 'bg-rose-100', 'text-rose-800');
+            
+            if (isCorrect) {
+                fb.classList.add('bg-emerald-100', 'text-emerald-800');
+                fb.innerHTML = `<i class="fa-solid fa-circle-check mr-1"></i> ${msg}`;
+                addPoints(10);
+            } else {
+                fb.classList.add('bg-rose-100', 'text-rose-800');
+                fb.innerHTML = `<i class="fa-solid fa-circle-xmark mr-1"></i> ${msg}`;
+            }
+        }
+
+        /* ================= 3. MATERI MODAL DATA ================= */
+        const materiData = {
+            mite: {
+                title: '1. Mite (Mitos)',
+                icon: '🔮',
+                badge: 'Kepercayaan & Suci',
+                desc: 'Mite adalah cerita rakyat yang dianggap benar-benar terjadi dan suci oleh masyarakat pemiliknya. Mite berkaitan erat dengan kepercayaan, dewa-dewi, roh halus, atau hal-hal gaib.',
+                ciri: [
+                    'Tokoh utama berupa dewa, dewi, roh halus, atau manusia bertuah.',
+                    'Dianggap suci dan sakral oleh masyarakat.',
+                    'Latar cerita berada di alam gaib atau masa lampau.'
+                ],
+                contoh: 'Nyi Roro Kidul (Ratu Laut Selatan), Dewi Sri (Dewi Padi).'
+            },
+            legenda: {
+                title: '2. Legenda',
+                icon: '🏞️',
+                badge: 'Asal-usul Tempat',
+                desc: 'Legenda mengisahkan asal-usul terjadinya suatu tempat, gunung, danau, atau peristiwa alam kuno.',
+                ciri: [
+                    'Tokoh memiliki kelebihan/kesaktian tertentu.',
+                    'Menjelaskan awal mula nama atau bentuk suatu tempat nyata.',
+                    'Sering dikaitkan dengan peninggalan batu/alam.'
+                ],
+                contoh: 'Asal-usul Danau Toba, Tangkuban Perahu, Malin Kundang.'
+            },
+            fabel: {
+                title: '3. Fabel',
+                icon: '🦊',
+                badge: 'Dunia Binatang',
+                desc: 'Fabel adalah cerita rakyat yang tokoh utamanya adalah binatang yang dapat berbicara, berpikir, dan bertindak layaknya manusia.',
+                ciri: [
+                    'Tokoh berupa hewan.',
+                    'Mengandung ajaran moral dan nasihat kebaikan.',
+                    'Alur cerita sederhana dan disukai anak-anak.'
+                ],
+                contoh: 'Kancil dan Buaya, Kura-kura dan Kelinci.'
+            },
+            epos: {
+                title: '4. Epos (Wiracarita)',
+                icon: '🏹',
+                badge: 'Kepahlawanan Megah',
+                desc: 'Epos adalah cerita kepahlawanan yang mengisahkan perjuangan tokoh gagah berani dalam pertempuran atau peperangan besar.',
+                ciri: [
+                    'Penuh aksi pertarungan dan strategi peperangan.',
+                    'Menceritakan tokoh pahlawan perkasa.',
+                    'Cenderung berdurasi panjang.'
+                ],
+                contoh: 'Kisah Ramayana, Mahabarata / Gatotkaca.'
+            },
+            sage: {
+                title: '5. Sage',
+                icon: '📜',
+                badge: 'Sejarah + Imajinasi',
+                desc: 'Sage adalah cerita rakyat yang mengandung unsur sejarah masa lalu yang telah ditambah dengan daya khayalan atau kesaktian tokoh.',
+                ciri: [
+                    'Berdasarkan peristiwa atau tokoh sejarah nyata.',
+                    'Dibumbui cerita kesaktian/keajaiban.',
+                    'Menampilkan keberanian membela rakyat.'
+                ],
+                contoh: 'Hikayat Hang Tuah, Calon Arang, Ciung Wanara.'
+            },
+            jenaka: {
+                title: '6. Dongeng Jenaka',
+                icon: '🤡',
+                badge: 'Humor & Hiburan',
+                desc: 'Dongeng jenaka menceritakan kejadian-kejadian lucu yang menimbulkan tawa akibat kebodohan atau kecerdikan tokohnya.',
+                ciri: [
+                    'Bersifat menghibur dan kocak.',
+                    'Tokoh utama konyol, malas, atau sangat cerdik.',
+                    'Menyindir kebiasaan buruk manusia secara halus.'
+                ],
+                contoh: 'Si Kabayan, Pak Belalang, Pak Pandir.'
+            },
+            khayalan: {
+                title: '7. Dongeng Khayalan',
+                icon: '✨',
+                badge: 'Imajinasi Murni',
+                desc: 'Dongeng khayalan adalah cerita rekaan yang sepenuhnya merupakan hasil imajinasi tanpa dikaitkan dengan sejarah atau tempat nyata.',
+                ciri: [
+                    'Penuh keajaiban (keberadaan putri, penyihir, benda ajaib).',
+                    'Murni imajinasi sebagai sarana hiburan.',
+                    'Mempunyai pesan moral jelas (yang baik selalu menang).'
+                ],
+                contoh: 'Bawang Merah Bawang Putih, Keong Emas.'
+            }
+        };
+
+        function showMateriModal(key) {
+            const data = materiData[key];
+            if (!data) return;
+
+            const modalBody = document.getElementById('materi-modal-body');
+            modalBody.innerHTML = `
+                <div class="flex items-center space-x-3 mb-4">
+                    <span class="text-4xl">${data.icon}</span>
+                    <div>
+                        <h3 class="font-title text-xl font-bold text-slate-800">${data.title}</h3>
+                        <span class="bg-teal-100 text-teal-800 text-xs font-bold px-2.5 py-0.5 rounded-full">${data.badge}</span>
+                    </div>
+                </div>
+                <p class="text-slate-700 text-xs md:text-sm leading-relaxed mb-4">${data.desc}</p>
+                
+                <div class="bg-slate-50 p-3 rounded-xl mb-4 border border-slate-200">
+                    <h4 class="font-title text-xs font-bold text-teal-800 uppercase mb-2">Ciri-Ciri Utama:</h4>
+                    <ul class="list-disc list-inside text-xs text-slate-600 space-y-1">
+                        ${data.ciri.map(c => `<li>${c}</li>`).join('')}
+                    </ul>
+                </div>
+
+                <div class="bg-amber-50 p-3 rounded-xl border border-amber-200 text-xs text-amber-900">
+                    <span class="font-bold">Contoh Terkenal:</span> ${data.contoh}
+                </div>
+            `;
+
+            document.getElementById('materi-modal').classList.remove('hidden');
+            addPoints(5);
+        }
+
+        function closeMateriModal() {
+            document.getElementById('materi-modal').classList.add('hidden');
+        }
+
+        /* ================= 4. AKTIVITAS DRAG & DROP ================= */
+        function handleDragStart(e) {
+            e.dataTransfer.setData('text/plain', e.target.getAttribute('data-match'));
+            e.target.classList.add('opacity-50');
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.currentTarget.classList.add('drag-over');
+        }
+
+        function handleDragLeave(e) {
+            e.currentTarget.classList.remove('drag-over');
+        }
+
+        function handleDrop(e, targetType) {
+            e.preventDefault();
+            const zone = e.currentTarget;
+            zone.classList.remove('drag-over');
+            const matchType = e.dataTransfer.getData('text/plain');
+
+            processMatch(matchType, targetType, zone);
+        }
+
+        // Click alternative for Touch Devices / FID
+        function handleCardClick(card) {
+            document.querySelectorAll('.draggable-card').forEach(c => c.classList.remove('ring-4', 'ring-amber-400'));
+            card.classList.add('ring-4', 'ring-amber-400');
+            state.selectedDragCard = card;
+        }
+
+        function handleZoneClick(targetType) {
+            if (!state.selectedDragCard) return;
+            const matchType = state.selectedDragCard.getAttribute('data-match');
+            const zone = document.querySelector(`.drop-zone[data-type="${targetType}"]`);
+            
+            processMatch(matchType, targetType, zone);
+            state.selectedDragCard.classList.remove('ring-4', 'ring-amber-400');
+            state.selectedDragCard = null;
+        }
+
+        function processMatch(matchType, targetType, zone) {
+            if (matchType === targetType) {
+                // Correct Match
+                zone.classList.add('bg-emerald-50', 'border-emerald-500');
+                zone.querySelector('.drop-target-content').innerHTML = `
+                    <div class="flex items-center space-x-2 text-emerald-800 font-bold text-xs">
+                        <i class="fa-solid fa-circle-check text-base text-emerald-600"></i>
+                        <span>Tepat Sekali! Pasangan Cocok.</span>
+                    </div>
+                `;
+
+                // Disable dragged card
+                const card = document.querySelector(`.draggable-card[data-match="${matchType}"]`);
+                if (card) card.classList.add('hidden');
+
+                state.activityDone++;
+                document.getElementById('activity-score-badge').textContent = `${state.activityDone}/3 Terpasang`;
+                addPoints(20);
+
+                if (state.activityDone === 3) {
+                    const fb = document.getElementById('aktivitas-feedback');
+                    fb.classList.remove('hidden');
+                    fb.className = 'mt-4 p-4 rounded-xl text-sm font-semibold text-center bg-emerald-100 text-emerald-800';
+                    fb.innerHTML = '🎉 Luar biasa! Kamu berhasil memasangkan semua ciri cerita rakyat dengan tepat!';
+                    confetti();
+                }
+            } else {
+                // Wrong Match
+                zone.classList.add('shake');
+                setTimeout(() => zone.classList.remove('shake'), 500);
+            }
+        }
+
+        function resetAktivitas() {
+            state.activityDone = 0;
+            state.selectedDragCard = null;
+            document.getElementById('activity-score-badge').textContent = '0/3 Terpasang';
+            document.getElementById('aktivitas-feedback').classList.add('hidden');
+
+            document.querySelectorAll('.draggable-card').forEach(c => c.classList.remove('hidden', 'ring-4', 'ring-amber-400'));
+            document.querySelectorAll('.drop-zone').forEach(z => {
+                z.classList.remove('bg-emerald-50', 'border-emerald-500');
+                z.querySelector('.drop-target-content').innerHTML = 'Tempatkan ciri di sini...';
+            });
+        }
+
+        /* ================= 5. GAME EDUKASI LOGIC ================= */
+        const gameCases = [
+            {
+                title: "Pertarungan Gatotkaca",
+                story: '"Gatotkaca yang perkasa terbang mengangkasa membela tanah airnya dari serangan para raksasa jahat dalam peperangan besar..."',
+                correct: 'Epos',
+                options: ['Epos', 'Fabel', 'Mite', 'Dongeng Jenaka']
+            },
+            {
+                title: "Kecerdikan Sang Kancil",
+                story: '"Sang Kancil memperdaya kawanan buaya di sungai dengan berpura-pura menghitung jumlah mereka untuk perintah Raja..."',
+                correct: 'Fabel',
+                options: ['Legenda', 'Fabel', 'Sage', 'Mite']
+            },
+            {
+                title: "Ratu Laut Selatan",
+                story: '"Masyarakat pesisir percaya bahwa Nyi Roro Kidul adalah penguasa gaib laut selatan yang memberikan berkah kelautan..."',
+                correct: 'Mite',
+                options: ['Dongeng Jenaka', 'Epos', 'Mite', 'Legenda']
+            }
+        ];
+
+        let currentGameIdx = 0;
+
+        function initGame() {
+            const current = gameCases[currentGameIdx];
+            document.getElementById('game-story-title').textContent = current.title;
+            document.getElementById('game-story-box').textContent = current.story;
+            document.getElementById('game-case-number').textContent = `Kasus #${currentGameIdx + 1}`;
+
+            const optBox = document.getElementById('game-options');
+            optBox.innerHTML = '';
+
+            current.options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'touch-btn bg-purple-50 hover:bg-purple-100 border-2 border-purple-200 text-purple-900 font-title font-bold p-3 rounded-xl text-sm transition';
+                btn.textContent = opt;
+                btn.onclick = () => answerGame(opt);
+                optBox.appendChild(btn);
+            });
+
+            document.getElementById('game-feedback').classList.add('hidden');
+        }
+
+        function answerGame(choice) {
+            const current = gameCases[currentGameIdx];
+            const fb = document.getElementById('game-feedback');
+            fb.classList.remove('hidden', 'bg-emerald-100', 'text-emerald-800', 'bg-rose-100', 'text-rose-800');
+
+            if (choice === current.correct) {
+                fb.classList.add('bg-emerald-100', 'text-emerald-800');
+                fb.innerHTML = `🎉 Tepat! Cerita ini adalah <strong>${current.correct}</strong>. Peno bangga padamu!`;
+                state.gameScore += 25;
+                document.getElementById('game-score').textContent = state.gameScore;
+                addPoints(25);
+
+                // Next case after delay
+                setTimeout(() => {
+                    currentGameIdx = (currentGameIdx + 1) % gameCases.length;
+                    initGame();
+                }, 1500);
+            } else {
+                fb.classList.add('bg-rose-100', 'text-rose-800');
+                fb.innerHTML = `❌ Kurang tepat. Coba ingat ciri khas ${current.correct}!`;
+            }
+        }
+
+        /* ================= 6. LATIHAN INTERAKTIF LOGIC ================= */
+        const latihanData = [
+            {
+                q: "Sebuah cerita rakyat mengisahkan tentang asal-usul terbentuknya Gunung Tangkuban Perahu akibat perahu yang ditendang Sangkuriang. Jenis cerita tersebut adalah...",
+                opts: ["A. Mite", "B. Legenda", "C. Fabel", "D. Epos"],
+                correct: 1,
+                explain: "Benar! Legenda menceritakan tentang asal-usul terjadinya suatu tempat atau gunung."
+            },
+            {
+                q: "Cerita Si Kabayan yang lucu dan konyol ketika menyembunyikan uang di karung bocor dikategorikan sebagai...",
+                opts: ["A. Dongeng Jenaka", "B. Sage", "C. Fabel", "D. Mite"],
+                correct: 0,
+                explain: "Tepat! Dongeng jenaka berfokus pada kejadian lucu dan konyol untuk menghibur."
+            },
+            {
+                q: "Kisah yang memadukan peristiwa sejarah nyata Adipati dengan keajaiban kesaktian tokohnya dinamakan...",
+                opts: ["A. Legenda", "B. Fabel", "C. Sage", "D. Epos"],
+                correct: 2,
+                explain: "Sangat baik! Sage adalah cerita yang mengandung unsur sejarah yang dibumbui imajinasi."
+            }
+        ];
+
+        function renderLatihan() {
+            const cur = latihanData[state.latihanCurrentIndex];
+            const box = document.getElementById('latihan-container');
+
+            document.getElementById('latihan-step-indicator').textContent = `Soal ${state.latihanCurrentIndex + 1} dari ${latihanData.length}`;
+
+            box.innerHTML = `
+                <p class="font-title text-slate-800 font-bold text-base mb-4">${cur.q}</p>
+                <div class="space-y-2 mb-4">
+                    ${cur.opts.map((opt, idx) => `
+                        <button onclick="checkLatihan(${idx})" class="touch-btn w-full bg-slate-50 hover:bg-teal-50 border-2 border-slate-200 hover:border-brand-teal p-3 rounded-xl text-left text-sm font-medium transition flex items-center justify-between">
+                            <span>${opt}</span>
+                            <i class="fa-regular fa-circle text-slate-400"></i>
+                        </button>
+                    `).join('')}
+                </div>
+                <div id="latihan-fb" class="p-4 rounded-xl text-sm hidden font-semibold"></div>
+            `;
+
+            // Toggle prev button visibility
+            document.getElementById('btn-prev-latihan').classList.toggle('hidden', state.latihanCurrentIndex === 0);
+        }
+
+        function checkLatihan(selectedIdx) {
+            const cur = latihanData[state.latihanCurrentIndex];
+            const fb = document.getElementById('latihan-fb');
+            fb.classList.remove('hidden', 'bg-emerald-100', 'text-emerald-800', 'bg-rose-100', 'text-rose-800');
+
+            if (selectedIdx === cur.correct) {
+                fb.classList.add('bg-emerald-100', 'text-emerald-800');
+                fb.innerHTML = `<i class="fa-solid fa-circle-check mr-1"></i> ${cur.explain}`;
+                addPoints(10);
+            } else {
+                fb.classList.add('bg-rose-100', 'text-rose-800');
+                fb.innerHTML = `<i class="fa-solid fa-circle-xmark mr-1"></i> Kurang tepat. Coba pikirkan kembali ciri khas cerita tersebut!`;
+            }
+        }
+
+        function changeLatihan(step) {
+            state.latihanCurrentIndex = Math.max(0, Math.min(latihanData.length - 1, state.latihanCurrentIndex + step));
+            renderLatihan();
+        }
+
+        /* ================= 7. KUIS EVALUASI 10 SOAL ================= */
+        const quizQuestions = [
+            {
+                q: "1. Cerita rakyat yang tokoh utamanya berupa binatang yang dapat berbicara seperti manusia disebut...",
+                options: ["A. Mite", "B. Legenda", "C. Fabel", "D. Sage"],
+                answer: 2,
+                reason: "Fabel adalah cerita rakyat bertokoh binatang."
+            },
+            {
+                q: "2. Kisah 'Asal-usul Danau Toba' menceritakan terbentuknya sebuah danau raksasa. Cerita ini dikelompokkan sebagai...",
+                options: ["A. Mite", "B. Legenda", "C. Dongeng Jenaka", "D. Epos"],
+                answer: 1,
+                reason: "Legenda mengisahkan asal-usul terbentuknya tempat atau danau."
+            },
+            {
+                q: "3. Nyi Roro Kidul dipercaya masyarakat sebagai penguasa Laut Selatan yang berkaitan dengan hal sakral. Jenis cerita ini adalah...",
+                options: ["A. Mite", "B. Fabel", "C. Sage", "D. Dongeng Jenaka"],
+                answer: 0,
+                reason: "Mite berhubungan dengan kepercayaan gaib dan dewa/roh."
+            },
+            {
+                q: "4. Cerita kepahlawanan megah tentang perang Ramayana dinamakan...",
+                options: ["A. Dongeng Khayalan", "B. Epos", "C. Fabel", "D. Legenda"],
+                answer: 1,
+                reason: "Epos adalah kisah wiracarita kepahlawanan."
+            },
+            {
+                q: "5. Cerita 'Si Kabayan' menceritakan tingkah konyol dan lucu tokohnya. Jenis cerita tersebut adalah...",
+                options: ["A. Sage", "B. Mite", "C. Dongeng Jenaka", "D. Fabel"],
+                answer: 2,
+                reason: "Dongeng jenaka berisi cerita humor dan kelucuan."
+            },
+            {
+                q: "6. Kombinasi antara fakta sejarah lama dan rekaan kesaktian tokoh pembela rakyat disebut...",
+                options: ["A. Sage", "B. Legenda", "C. Mite", "D. Fabel"],
+                answer: 0,
+                reason: "Sage mengandung unsur sejarah yang bercampur khayalan."
+            },
+            {
+                q: "7. Kisah Bawang Merah Bawang Putih yang berisi keajaiban dan murni imajinasi dinamakan...",
+                options: ["A. Mite", "B. Dongeng Khayalan", "C. Sage", "D. Epos"],
+                answer: 1,
+                reason: "Dongeng khayalan sepenuhnya hasil imajinasi murni."
+            },
+            {
+                q: "8. Manakah di bawah ini yang merupakan ciri utama dari Mite?",
+                options: ["A. Mengisahkan hewan berbicara", "B. Berhubungan dengan dewa & kepercayaan gaib", "C. Menceritakan asal nama kota", "D. Berisi cerita lucu"],
+                answer: 1,
+                reason: "Mite berkaitan dengan keagamaan/mitologi dan hal gaib."
+            },
+            {
+                q: "9. Cerita 'Ciung Wanara' dari Jawa Barat yang memiliki latar sejarah kerajaan kuno dikategorikan sebagai...",
+                options: ["A. Sage", "B. Fabel", "C. Mite", "D. Dongeng Jenaka"],
+                answer: 0,
+                reason: "Ciung Wanara adalah contoh cerita Sage."
+            },
+            {
+                q: "10. Mengapa kita perlu mempelajari dan melestarikan cerita rakyat Nusantara?",
+                options: ["A. Karena cerita rakyat tidak berguna", "B. Untuk mengambil pesan moral dan menjaga budaya bangsa", "C. Agar bisa membuat cerita bohong", "D. Hanya untuk dihafalkan saja"],
+                answer: 1,
+                reason: "Cerita rakyat mengandung nilai moral dan identitas budaya bangsa."
+            }
+        ];
+
+        function renderQuizQuestion() {
+            const curIdx = state.quizCurrentIndex;
+            const curQ = quizQuestions[curIdx];
+
+            document.getElementById('quiz-current-num').textContent = curIdx + 1;
+            document.getElementById('quiz-progress-bar').style.width = `${((curIdx + 1) / 10) * 100}%`;
+
+            const card = document.getElementById('quiz-card-box');
+            card.innerHTML = `
+                <h3 class="font-title text-base md:text-lg font-bold text-slate-800 mb-4">${curQ.q}</h3>
+                <div class="space-y-3">
+                    ${curQ.options.map((opt, oIdx) => {
+                        const isSelected = state.quizAnswers[curIdx] === oIdx;
+                        return `
+                            <button onclick="selectQuizAnswer(${oIdx})" class="touch-btn w-full p-3.5 rounded-xl text-left text-sm font-medium transition flex items-center justify-between ${
+                                isSelected 
+                                ? 'bg-teal-100 border-2 border-brand-teal text-teal-900 font-bold' 
+                                : 'bg-slate-50 border border-slate-200 hover:bg-slate-100 text-slate-700'
+                            }">
+                                <span>${opt}</span>
+                                ${isSelected ? '<i class="fa-solid fa-circle-check text-brand-teal text-lg"></i>' : '<i class="fa-regular fa-circle text-slate-300"></i>'}
+                            </button>
+                        `;
+                    }).join('')}
+                </div>
+            `;
+
+            // Toggle prev button visibility
+            document.getElementById('quiz-prev-btn').classList.toggle('hidden', curIdx === 0);
+
+            // Change next button label on last question
+            const nextBtn = document.getElementById('quiz-next-btn');
+            if (curIdx === quizQuestions.length - 1) {
+                nextBtn.innerHTML = 'Selesai & Lihat Hasil <i class="fa-solid fa-trophy ml-1"></i>';
+            } else {
+                nextBtn.innerHTML = 'Selanjutnya <i class="fa-solid fa-arrow-right ml-1"></i>';
+            }
+        }
+
+        function selectQuizAnswer(optIdx) {
+            state.quizAnswers[state.quizCurrentIndex] = optIdx;
+            renderQuizQuestion();
+        }
+
+        function navQuiz(step) {
+            if (step === 1 && state.quizAnswers[state.quizCurrentIndex] === null) {
+                alert('Silakan pilih salah satu jawaban terlebih dahulu!');
+                return;
+            }
+
+            if (state.quizCurrentIndex === quizQuestions.length - 1 && step === 1) {
+                // Finish Quiz
+                calculateQuizResults();
+                navigateTo('hasil');
+                return;
+            }
+
+            state.quizCurrentIndex = Math.max(0, Math.min(quizQuestions.length - 1, state.quizCurrentIndex + step));
+            renderQuizQuestion();
+        }
+
+        function resetQuiz() {
+            state.quizCurrentIndex = 0;
+            state.quizAnswers.fill(null);
+            renderQuizQuestion();
+        }
+
+        /* ================= 8. HASIL BELAJAR CALCULATIONS ================= */
+        function calculateQuizResults() {
+            let correctCount = 0;
+            quizQuestions.forEach((q, idx) => {
+                if (state.quizAnswers[idx] === q.answer) {
+                    correctCount++;
+                }
+            });
+
+            const scoreVal = correctCount * 10;
+            document.getElementById('final-quiz-score').textContent = scoreVal;
+            document.getElementById('stat-correct').textContent = correctCount;
+            document.getElementById('stat-wrong').textContent = 10 - correctCount;
+
+            const badgeElem = document.getElementById('final-badge');
+            const remedBox = document.getElementById('remedial-box');
+
+            if (scoreVal >= 80) {
+                badgeElem.textContent = '🌟 Detektif Cerita Utama (Sangat Baik)';
+                badgeElem.className = 'mt-3 inline-block bg-emerald-400 text-slate-900 font-title text-xs font-bold px-4 py-1.5 rounded-full shadow-sm';
+                remedBox.innerHTML = '<strong>Pengayaan:</strong> Selamat! Pemahamanmu sangat matang. Cobalah membaca cerita rakyat daerah lain dan identifikasi jenisnya!';
+                confetti();
+            } else if (scoreVal >= 60) {
+                badgeElem.textContent = '👍 Penyelidik Cilik Handal (Baik)';
+                badgeElem.className = 'mt-3 inline-block bg-yellow-400 text-slate-900 font-title text-xs font-bold px-4 py-1.5 rounded-full shadow-sm';
+                remedBox.innerHTML = '<strong>Saran:</strong> Kamu sudah memahami sebagian besar materi. Pelajari kembali perbedaan antara Mite dan Legenda!';
+            } else {
+                badgeElem.textContent = '💪 Pengembara Pemula (Perlu Latihan)';
+                badgeElem.className = 'mt-3 inline-block bg-orange-400 text-white font-title text-xs font-bold px-4 py-1.5 rounded-full shadow-sm';
+                remedBox.innerHTML = '<strong>Remedial:</strong> Jangan berkecil hati! Buka kembali tab <strong>Materi</strong> dan baca kembali ciri khas 7 jenis cerita rakyat.';
+            }
+
+            addPoints(scoreVal);
+        }
+
+        /* ================= 9. REFLEKSI FORM HANDLER ================= */
+        function handleReflectionSubmit(e) {
+            e.preventDefault();
+            document.getElementById('reflection-form').classList.add('hidden');
+            document.getElementById('reflection-thanks').classList.remove('hidden');
+            addPoints(15);
+            confetti();
+        }
+
+        /* ================= INITIALIZATION ================= */
+        window.onload = function() {
+            loadSavedState();
+            renderQuizQuestion();
+        };
+    </script>
+</body>
+</html>
